@@ -1,0 +1,1 @@
+chrome.storage.local.set({doc: document.documentElement.innerHTML})
