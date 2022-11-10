@@ -1,38 +1,47 @@
+let html
+
+const sendHTMLRequest = () => {
+    console.log("Sending HTML request to content...")
+    chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
+        const activeTab = tabs[0];
+        chrome.tabs.sendMessage(activeTab.id, {});
+    });
+}
+
 async function submitQuestion(event){
     event.preventDefault();
-
-    function getPageHTML(){
-        return new Promise((resolve) => {
-            chrome.storage.local.get("doc", resolve);
-        })
+    console.log(html)
+    if (html === null || html === ""){
+        console.warn("Empty HTML")
+        sendHTMLRequest()
+        return;
     }
 
-    let html = await getPageHTML();
-    let doc = html.doc
-    console.log(doc)
-
     let question = questionForm.querySelector("#search-bar-input").value;
-    console.log(question)
+    console.log("Question:", question)
    
     let response = await fetch('https://8sh18d.deta.dev/text', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
-            body: JSON.stringify({text: doc, question: question}) 
+            body: JSON.stringify({text: html, question: question}) 
         }
     );
 
     response.json().then(function(data){
-            chrome.storage.local.set({IS_BODY_LOADED: true})
-            console.log(data);
+            console.log("Answer:", data.answer);
+            console.log("Confidence", data.score)
         }
-    );
-
-    
+    ); 
 }
 
+const handleMsg = (msg, sender, callback) => {
+    console.log("Recived message")
+    html = msg.html;
+}
 
-
-let questionForm = document.getElementById("question-form")
+chrome.runtime.onMessage.addListener(handleMsg);
+const questionForm = document.getElementById("question-form")
 questionForm.addEventListener('submit', submitQuestion)
+sendHTMLRequest()
