@@ -1,4 +1,4 @@
-let html
+let html = "";
 
 const sendHTMLRequest = () => {
     console.log("Sending HTML request to content...")
@@ -7,41 +7,49 @@ const sendHTMLRequest = () => {
         chrome.tabs.sendMessage(activeTab.id, {});
     });
 }
+sendHTMLRequest();
 
-async function submitQuestion(event){
-    event.preventDefault();
-    console.log(html)
-    if (html === null || html === ""){
-        console.warn("Empty HTML")
-        sendHTMLRequest()
-        return;
-    }
+const handleMsg = (msg, sender, callback) => {
+    console.log("Recived message");
+    html = msg.html;
+}
+chrome.runtime.onMessage.addListener(handleMsg);
 
-    let question = questionForm.querySelector("#search-bar-input").value;
-    console.log("Question:", question)
-   
-    let response = await fetch('https://8sh18d.deta.dev/text', {
+const sendServerRequest = async(requestBody) =>{
+    return fetch('https://8sh18d.deta.dev/text', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({text: html, question: question}) 
+            headers: {'Content-Type': 'application/json;charset=utf-8'},
+            body: requestBody 
         }
     );
+}
 
+const handleResponse = (response) => {
     response.json().then(function(data){
             console.log("Answer:", data.answer);
-            console.log("Confidence", data.score)
+            console.log("Confidence", data.score);
         }
     ); 
 }
 
-const handleMsg = (msg, sender, callback) => {
-    console.log("Recived message")
-    html = msg.html;
+const submitQuestion =  async(event) =>{
+    event.preventDefault();
+    
+    if (html === undefined || html === ""){
+        console.warn("Empty HTML");
+        sendHTMLRequest();
+        return;
+    }
+    console.log("Recived page HTML:", html);
+    const question = questionForm.querySelector("#search-bar-input").value;
+    console.log("Question:", question);
+    console.log("Sending request on server...");
+
+    const requestBody = JSON.stringify({text: html, question: question});
+    const response = await sendServerRequest(requestBody);
+
+    handleResponse(response);
 }
 
-chrome.runtime.onMessage.addListener(handleMsg);
-const questionForm = document.getElementById("question-form")
-questionForm.addEventListener('submit', submitQuestion)
-sendHTMLRequest()
+const questionForm = document.getElementById("question-form");
+questionForm.addEventListener('submit', submitQuestion);
