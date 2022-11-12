@@ -23,7 +23,7 @@
         "js": ["content/content-script.js"]
     }],
     "commands": {
-        "_execute_browser_action": {
+        "_execute_action": {
           "suggested_key": {
             "default": "Ctrl+Shift+F",
             "mac": "MacCtrl+Shift+F"
