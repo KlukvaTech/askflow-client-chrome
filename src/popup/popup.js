@@ -1,4 +1,4 @@
-let html = "";
+let pageText = "";
 
 const sendHTMLRequest = () => {
     console.log("Sending HTML request to content...")
@@ -11,12 +11,12 @@ sendHTMLRequest();
 
 const handleMsg = (msg, sender, callback) => {
     console.log("Recived message");
-    html = msg.html;
+    pageText = msg.text;
 }
 chrome.runtime.onMessage.addListener(handleMsg);
 
 const sendServerRequest = async(requestBody) =>{
-    return fetch('https://8sh18d.deta.dev/text', {
+    return fetch('https://askflow-backend.onrender.com/text', {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=utf-8'},
             body: requestBody 
@@ -35,21 +35,24 @@ const handleResponse = (response) => {
 const submitQuestion =  async(event) =>{
     event.preventDefault();
     
-    if (html === undefined || html === ""){
-        console.warn("Empty HTML");
+    if (pageText === undefined || pageText === ""){
+        console.warn("Empty page text");
         sendHTMLRequest();
         return;
     }
-    console.log("Recived page HTML:", html);
-    const question = questionForm.querySelector("#search-bar-input").value;
+    console.log("Recived page text:", pageText);
+
+    const question = event.target.querySelector("#search-bar-input").value;
+    if (question === null || question === "" ) {
+        console.warn("Empty question field")
+        return;
+    }
+        
     console.log("Question:", question);
+    
+    const requestBody = JSON.stringify({text: pageText, question: question});
     console.log("Sending request on server...");
-
-    const requestBody = JSON.stringify({text: html, question: question});
     const response = await sendServerRequest(requestBody);
-
     handleResponse(response);
 }
-
-const questionForm = document.getElementById("question-form");
-questionForm.addEventListener('submit', submitQuestion);
+document.getElementById("question-form").addEventListener('submit', submitQuestion);

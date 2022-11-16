@@ -1,13 +1,13 @@
 const sendHTML = () => {
-    console.log("Sending HTML to popup...")
+    console.log("Sending HTML to popup...");
     const msg = {
-        html: document.documentElement.innerHTML
+        text: document.documentElement.innerText
     }
-    chrome.runtime.sendMessage(msg)
+    chrome.runtime.sendMessage(msg);
 }
 
 const handleMsg = (msg, sender, callback) => {
-    console.log("Recived message")
+    console.log("Recived message");
     sendHTML();  
 }
 
