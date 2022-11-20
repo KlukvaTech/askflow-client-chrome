@@ -8,7 +8,7 @@
       },
     "permissions": ["storage", "activeTab", "scripting", "webRequest"],
     "host_permissions": [
-        "https://8sh18d.deta.dev/*"
+        "https://askflow-backend.onrender.com/*"
       ],
     "action": {
         "default_popup": "popup/popup.html",
@@ -20,7 +20,7 @@
     "content_scripts": [{
         "matches": ["<all_urls>"],
         "css": ["content/content-style.css"],
-        "js": ["content/content-script.js"]
+        "js": ["content/content-script.js", "libs/mark.min.js"]
     }],
     "commands": {
         "_execute_action": {
