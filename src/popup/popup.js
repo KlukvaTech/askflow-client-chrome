@@ -1,13 +1,13 @@
 let pageText = "";
 
-const sendHTMLRequest = () => {
-    console.log("Sending HTML request to content...")
+const sendRequestMessage = (messageBody) => {
     chrome.tabs.query({currentWindow: true, active: true}, function (tabs){
         const activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {});
+        chrome.tabs.sendMessage(activeTab.id, messageBody);
     });
 }
-sendHTMLRequest();
+console.log("Sending HTML request to content...")
+sendRequestMessage({type: "htmlRequest"});
 
 const handleMsg = (msg, sender, callback) => {
     console.log("Recived message");
@@ -15,8 +15,8 @@ const handleMsg = (msg, sender, callback) => {
 }
 chrome.runtime.onMessage.addListener(handleMsg);
 
-const sendServerRequest = async(requestBody) =>{
-    return fetch('https://askflow-backend.onrender.com/text', {
+const sendServerRequest = async(requestBody) => {
+    return fetch('https://askflow-backend.onrender.com/onlytext', {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=utf-8'},
             body: requestBody 
@@ -28,6 +28,7 @@ const handleResponse = (response) => {
     response.json().then(function(data){
             console.log("Answer:", data.answer);
             console.log("Confidence", data.score);
+            sendRequestMessage({type: "searchWord", word: data.answer})
         }
     ); 
 }
@@ -37,7 +38,6 @@ const submitQuestion =  async(event) =>{
     
     if (pageText === undefined || pageText === ""){
         console.warn("Empty page text");
-        sendHTMLRequest();
         return;
     }
     console.log("Recived page text:", pageText);
