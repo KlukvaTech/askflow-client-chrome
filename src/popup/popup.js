@@ -28,7 +28,7 @@ const handleResponse = (response) => {
     response.json().then(function(data){
             console.log("Answer:", data.answer);
             console.log("Confidence", data.score);
-            sendRequestMessage({type: "searchWord", word: data.answer})
+            sendRequestMessage({type: "searchWord", answer: data.answer, context: data.context})
         }
     ); 
 }
