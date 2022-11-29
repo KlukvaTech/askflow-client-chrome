@@ -6,13 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="popup.css">
     
-    <title>Document</title>
+    <title>Askflow-popup</title>
 </head>
 <body>
     <form action="" id="question-form">
-        <input type="text" id="search-bar-input" autocomplete="off" placeholder="Введите вопрос" autofocus>  
+        <div class="form__group field">
+            <input type="text" class="form__field" id="search-bar-input" placeholder="Введите вопрос" name="name" autocomplete="off" autofocus required />
+            <label for="name" class="form__label">Введите вопрос</label>
+          </div>
         <button type="submit" id="search-bar-submit-button">
-            <img src="..\images\icon_128.png" alt="Найти" height="50" width="50">
+            <img src="..\images\lupa_512.png" alt="Найти" height="35" width="35">
         </button>
     </form>
     <script src="popup.js"></script>
