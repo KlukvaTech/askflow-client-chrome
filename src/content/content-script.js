@@ -1,18 +1,27 @@
 const sendHTML = () => {
-    const msg = {
-        text: document.documentElement.innerText
-    }
+    const msg = { text: document.documentElement.innerText }
     chrome.runtime.sendMessage(msg);
 }
 
-const searchAndHighlight = (search) => {
-    var instance = new Mark(document.body);
+const searchAndHighlight = (answer, context) => {
+    const instance = new Mark(document.body);
     instance.unmark();
-    instance.mark(search, {
+    instance.mark(context, {
+        "element": "span",
+        "className": "askflow-context",
+        "acrossElements": true,
+        "separateWordSearch": false,
+        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=".split(""),
+        "ignoreJoiners": true
+    });
+    const bodyContext = new Mark(document.querySelectorAll("span.askflow-context"));
+    bodyContext.mark(answer, {
         "element": "span",
         "className": "askflow-highlight",
         "acrossElements": true,
-        "separateWordSearch": false
+        "separateWordSearch": false,
+        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=".split(""),
+        "ignoreJoiners": true
     });
 }
 
@@ -25,8 +34,9 @@ const handleMsg = (msg, sender, callback) => {
             break;
         }
         case "searchWord": {
-            console.log("Highlighting word", msg.word);
-            searchAndHighlight(msg.word);
+            console.log("Context", msg.context);
+            console.log("Highlighting answer", msg.answer);
+            searchAndHighlight(msg.answer, msg.context);
             break;
         }
         default: {
