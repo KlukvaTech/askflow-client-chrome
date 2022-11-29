@@ -1,7 +1,5 @@
 const sendHTML = () => {
-    const msg = {
-        text: document.documentElement.innerText
-    }
+    const msg = { text: document.documentElement.innerText }
     chrome.runtime.sendMessage(msg);
 }
 
@@ -13,15 +11,8 @@ const searchAndHighlight = (answer, context) => {
         "className": "askflow-context",
         "acrossElements": true,
         "separateWordSearch": false,
-        "ignorePunctuation": [
-            ",",
-            ".",
-            "!",
-            "-",
-            "—",
-            ":",
-            ";"
-        ]
+        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=".split(""),
+        "ignoreJoiners": true
     });
     const bodyContext = new Mark(document.querySelectorAll("span.askflow-context"));
     bodyContext.mark(answer, {
@@ -29,11 +20,8 @@ const searchAndHighlight = (answer, context) => {
         "className": "askflow-highlight",
         "acrossElements": true,
         "separateWordSearch": false,
-        "ignorePunctuation": [
-            ",",
-            ".",
-            "!"
-        ]
+        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=".split(""),
+        "ignoreJoiners": true
     });
 }
 
