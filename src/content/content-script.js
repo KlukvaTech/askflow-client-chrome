@@ -7,21 +7,22 @@ const searchAndHighlight = (answer, context) => {
     const instance = new Mark(document.body);
     instance.unmark();
     instance.mark(context, {
-        "element": "span",
         "className": "askflow-context",
         "acrossElements": true,
         "separateWordSearch": false,
-        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=".split(""),
-        "ignoreJoiners": true
+        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=\n ".split(""),
+        "ignoreJoiners": true,
+        "debug": true
     });
-    const bodyContext = new Mark(document.querySelectorAll("span.askflow-context"));
+    const bodyContext = new Mark(document.querySelectorAll("mark.askflow-context"));
+    //bodyContext.unmark()
     bodyContext.mark(answer, {
-        "element": "span",
         "className": "askflow-highlight",
         "acrossElements": true,
         "separateWordSearch": false,
-        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=".split(""),
-        "ignoreJoiners": true
+        "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=\n ".split(""),
+        "ignoreJoiners": true,
+        "debug": true
     });
 }
 
