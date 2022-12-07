@@ -1,5 +1,5 @@
 const sendHTML = () => {
-    const msg = { text: document.documentElement.innerText }
+    const msg = { text: document.documentElement.innerHTML }
     chrome.runtime.sendMessage(msg);
 }
 
@@ -12,9 +12,10 @@ const searchAndHighlight = (answer, context) => {
         "separateWordSearch": false,
         "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=\n ".split(""),
         "ignoreJoiners": true,
-        "debug": true
+        "debug": true,
+        "element" : "span"
     });
-    const bodyContext = new Mark(document.querySelectorAll("mark.askflow-context"));
+    const bodyContext = new Mark(document.querySelectorAll("span.askflow-context"));
     //bodyContext.unmark()
     bodyContext.mark(answer, {
         "className": "askflow-highlight",
@@ -22,8 +23,11 @@ const searchAndHighlight = (answer, context) => {
         "separateWordSearch": false,
         "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=\n ".split(""),
         "ignoreJoiners": true,
-        "debug": true
+        "debug": true,
+        "element" : "span"
     });
+
+    document.querySelector(".askflow-highlight").scrollIntoView({behavior: "smooth"});
 }
 
 const handleMsg = (msg, sender, callback) => {

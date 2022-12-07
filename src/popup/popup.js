@@ -16,7 +16,7 @@ const handleMsg = (msg, sender, callback) => {
 chrome.runtime.onMessage.addListener(handleMsg);
 
 const sendServerRequest = async(requestBody) => {
-    return fetch('https://askflow-backend.onrender.com/onlytext', {
+    return fetch('https://askflow-backend.onrender.com/onlyhtml', {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=utf-8'},
             body: requestBody 
@@ -56,7 +56,7 @@ const submitQuestion =  async(event) =>{
         
     console.log("Question:", question);
     
-    const requestBody = JSON.stringify({text: pageText, question: question});
+    const requestBody = JSON.stringify({html: pageText, question: question});
     console.log("Sending request on server...");
 
     toggleVisibility();
