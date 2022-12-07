@@ -33,6 +33,12 @@ const handleResponse = (response) => {
     ); 
 }
 
+const toggleVisibility = () => {
+    document.getElementById("search-bar-submit-button-contanier").classList.toggle("hidden-element");
+    document.getElementById("lds-ring").classList.toggle("hidden-element");
+}
+
+
 const submitQuestion =  async(event) =>{
     event.preventDefault();
     
@@ -52,7 +58,10 @@ const submitQuestion =  async(event) =>{
     
     const requestBody = JSON.stringify({text: pageText, question: question});
     console.log("Sending request on server...");
+
+    toggleVisibility();
     const response = await sendServerRequest(requestBody);
+    toggleVisibility();
     handleResponse(response);
 }
 document.getElementById("question-form").addEventListener('submit', submitQuestion);
