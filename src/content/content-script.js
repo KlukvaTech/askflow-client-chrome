@@ -5,6 +5,7 @@ const sendHTML = () => {
 
 const searchAndHighlight = (answer, context) => {
     const instance = new Mark(document.body);
+    let isContextSet = true;
     instance.unmark();
     instance.mark(context, {
         "className": "askflow-context",
@@ -13,9 +14,16 @@ const searchAndHighlight = (answer, context) => {
         "ignorePunctuation": ":;.,-–—‒_(){}[]!'\"+=\n ".split(""),
         "ignoreJoiners": true,
         "debug": true,
-        "element" : "span"
+        "element" : "span",
+        "noMatch" : () => {
+            isContextSet = false;
+        }
     });
-    const bodyContext = new Mark(document.querySelectorAll("span.askflow-context"));
+    let bodyContext = null;
+    if (isContextSet)
+        bodyContext = new Mark(document.querySelectorAll("span.askflow-context"));
+    else
+        bodyContext = new Mark(document.body);
     //bodyContext.unmark()
     bodyContext.mark(answer, {
         "className": "askflow-highlight",
