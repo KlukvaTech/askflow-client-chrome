@@ -26,12 +26,21 @@ const sendServerRequest = async(requestBody) => {
 
 const handleResponse = (response) => {
     response.json().then(function(data){
-            console.log("Answer:", data.answer);
-            console.log("Confidence", data.score);
-            sendRequestMessage({type: "searchWord", answer: data.answer, context: data.context})
+            console.log(data);
+            sendRequestMessage({type: "searchWord", data: data})
         }
     ); 
 }
+
+const handleButtonUp = (event) => {
+    sendRequestMessage({type: "previousAnswer"})
+}
+document.getElementById("up-button").addEventListener('click', handleButtonUp)
+
+const handleButtonDown = (event) => {
+    sendRequestMessage({type: "nextAnswer"})
+}
+document.getElementById("down-button").addEventListener('click', handleButtonDown)
 
 const toggleVisibility = () => {
     document.getElementById("search-bar-submit-button-contanier").classList.toggle("hidden-element");
@@ -46,7 +55,6 @@ const submitQuestion =  async(event) =>{
         console.warn("Empty page text");
         return;
     }
-    console.log("Recived page text:", pageText);
 
     const question = event.target.querySelector("#search-bar-input").value;
     if (question === null || question === "" ) {

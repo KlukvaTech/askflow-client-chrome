@@ -1,13 +1,16 @@
+let answers = null;
+let currAnsw = 0;
+
 const sendHTML = () => {
     const msg = { text: document.documentElement.innerHTML }
     chrome.runtime.sendMessage(msg);
 }
 
-const searchAndHighlight = (answer, context) => {
+const searchAndHighlight = (result) => {
     const instance = new Mark(document.body);
     let isContextSet = true;
     instance.unmark();
-    instance.mark(context, {
+    instance.mark(result.context, {
         "className": "askflow-context",
         "acrossElements": true,
         "separateWordSearch": false,
@@ -25,7 +28,7 @@ const searchAndHighlight = (answer, context) => {
     else
         bodyContext = new Mark(document.body);
     //bodyContext.unmark()
-    bodyContext.mark(answer, {
+    bodyContext.mark(result.answer, {
         "className": "askflow-highlight",
         "acrossElements": true,
         "separateWordSearch": false,
@@ -35,7 +38,7 @@ const searchAndHighlight = (answer, context) => {
         "element" : "span"
     });
 
-    document.querySelector(".askflow-highlight").scrollIntoView({behavior: "smooth"});
+    document.querySelector(".askflow-highlight").scrollIntoView({behavior: "smooth", block: "center"});
 }
 
 const handleMsg = (msg, sender, callback) => {
@@ -47,9 +50,34 @@ const handleMsg = (msg, sender, callback) => {
             break;
         }
         case "searchWord": {
-            console.log("Context", msg.context);
-            console.log("Highlighting answer", msg.answer);
-            searchAndHighlight(msg.answer, msg.context);
+            console.log("Answers", msg);
+            answers = msg.data;
+            currAnsw = 0;
+            searchAndHighlight(answers[0]);
+            break;
+        }
+        case "previousAnswer": {
+            console.log("prev");
+            if(!(currAnsw === 0)) {
+                currAnsw-= 1;
+                searchAndHighlight(answers[currAnsw])
+            }
+            else {
+                currAnsw = answers.length - 1;
+                searchAndHighlight(answers[currAnsw])
+            }
+            break;
+        }
+        case "nextAnswer": {
+            console.log("next");
+            if(currAnsw + 1 < answers.length) {
+                currAnsw++;
+                searchAndHighlight(answers[currAnsw])
+            }
+            else {
+                currAnsw = 0;
+                searchAndHighlight(answers[currAnsw])
+            }
             break;
         }
         default: {
